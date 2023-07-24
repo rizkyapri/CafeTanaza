@@ -24,6 +24,10 @@
                                         </th>
                                         <th scope="col"
                                             class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                            Price
+                                        </th>
+                                        <th scope="col"
+                                            class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
                                             Guest
                                         </th>
                                         <th scope="col"
@@ -33,6 +37,10 @@
                                         <th scope="col"
                                             class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
                                             Location
+                                        </th>
+                                        <th scope="col"
+                                            class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                            Image
                                         </th>
                                         <th scope="col" class="relative py-3 px-6">
                                             <span class="sr-only">Edit</span>
@@ -47,6 +55,10 @@
                                                 {{ $table->name }}
                                             </td>
                                             <td
+                                                class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                Rp. {{ number_format($table->price, 0, 2) }}
+                                            </td>
+                                            <td
                                                 class="py-4 px-6 text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
                                                 {{ $table->guest_number }}
                                             </td>
@@ -58,6 +70,10 @@
                                                 class="py-4 px-6 text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
                                                 {{ $table->location->name }}
                                             </td>
+                                            <td
+                                                class="py-4 px-6 text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
+                                                <img src="{{ Storage::url($table->image) }}" alt="">
+                                            </td>
                                             <td class="py-4 px-6 text-sm font-medium text-right whitespace-nowrap">
                                                 <div class="flex space-x-2">
                                                     <a href="{{ route('admin.tables.edit', $table->id) }}"
@@ -66,7 +82,7 @@
                                                         class="px-4 py-2 bg-red-500 hover:bg-red-700 rounded-lg text-white"
                                                         method="POST"
                                                         action="{{ route('admin.tables.destroy', $table->id) }}"
-                                                        onsubmit="return confirm('Are you sure?');">
+                                                        onsubmit="return showDeleteConfirmation(event);">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit">Delete</button>

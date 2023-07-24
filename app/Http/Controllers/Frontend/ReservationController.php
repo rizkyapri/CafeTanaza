@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Enums\TableStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Rules\DateBetween;
 use App\Rules\TimeBetween;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ReservationController extends Controller
 {
@@ -64,8 +66,49 @@ class ReservationController extends Controller
         $reservation = $request->session()->get('reservation');
         $reservation->fill($validated);
         $reservation->save();
+
+        return to_route('reservations.store.step.three');
+    }
+
+    public function stepThree(Request $request)
+    {
+        $validated = $request->session()->get('reservation');
+        $tables = Table::where('id', $validated->table_id)->first();
+
+        return view('reservations.step-three', compact('validated', 'tables'));
+    }
+
+    public function storeStepThree(Request $request)
+    {
+        $validated = $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Upload dan simpan gambar ke direktori storage/app/public/payment
+        $imagePath = $request->file('image')->store('public/payment');
+
+        // Simpan data pembayaran
+        $payment = Payment::create([
+            'image' => $imagePath,
+            // Tambahkan atribut lain untuk disimpan di model Payment sesuai kebutuhan
+        ]);
+
+        // Ambil data reservasi dari session
+        $reservation = $request->session()->get('reservation');
+
+        // Kaitkan data pembayaran dengan reservasi (jika dibutuhkan)
+        $reservation->payment_id = $payment->id;
+
+        // Simpan data reservasi
+        $reservation->save();
+
+        // Ambil nomor telepon pengguna dari informasi otentikasi
+        $userPhone = $reservation->tel_number;
+
+        // Clear the reservation data from the session after successful reservation
         $request->session()->forget('reservation');
 
-        return to_route('thankyou');
+        // Redirect to the thank you page with the user's phone number as a query parameter
+        return redirect()->route('thankyou')->with('userPhone', $userPhone);
     }
 }

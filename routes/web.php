@@ -20,6 +20,8 @@ Route::get('/reservation/step-one', [FrontendReservationController::class, 'step
 Route::post('/reservation/step-one', [FrontendReservationController::class, 'storeStepOne'])->name('reservations.store.step.one');
 Route::get('/reservation/step-two', [FrontendReservationController::class, 'stepTwo'])->name('reservations.step.two');
 Route::post('/reservation/step-two', [FrontendReservationController::class, 'storeStepTwo'])->name('reservations.store.step.two');
+Route::get('/reservation/step-three', [FrontendReservationController::class, 'stepThree'])->name('reservations.step.three');
+Route::post('/reservation/step-three', [FrontendReservationController::class, 'storeStepThree'])->name('reservations.store.step.three');
 Route::get('/thankyou', [WelcomeController::class, 'thankyou'])->name('thankyou');
 
 Route::get('/dashboard', function () {
@@ -31,7 +33,10 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::resource('/categories', CategoryController::class);
     Route::resource('/menus', MenuController::class);
     Route::resource('/tables', TableController::class);
+
     Route::resource('/reservations', ReservationController::class);
+    Route::put('/reservations/approve/{id}', [ReservationController::class, 'approve'])->name('reservations.approve'); // route untuk mengupdate data
+    Route::put('/reservations/reject/{id}', [ReservationController::class, 'reject'])->name('reservations.reject'); // route untuk mengupdate data
 });
 
 require __DIR__ . '/auth.php';

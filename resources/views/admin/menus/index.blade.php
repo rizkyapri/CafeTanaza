@@ -48,7 +48,7 @@
                                             </td>
                                             <td
                                                 class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {{ $menu->price }}
+                                                Rp. {{ number_format($menu->price, 0, 2) }}
                                             </td>
                                             <td
                                                 class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -59,7 +59,7 @@
                                                         class="px-4 py-2 bg-red-500 hover:bg-red-700 rounded-lg text-white"
                                                         method="POST"
                                                         action="{{ route('admin.menus.destroy', $menu->id) }}"
-                                                        onsubmit="return confirm('Are you sure?');">
+                                                        onsubmit="return showDeleteConfirmation(event);">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit">Delete</button>

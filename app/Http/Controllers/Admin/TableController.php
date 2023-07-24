@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TableStoreRequest;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 
 use function Ramsey\Uuid\v1;
 
@@ -40,11 +42,15 @@ class TableController extends Controller
      */
     public function store(TableStoreRequest $request)
     {
+        $image = $request->file('image')->store('public/payment');
+
         Table::create([
             'name' => $request->name,
+            'price' => $request->price,
             'guest_number' => $request->guest_number,
             'status' => $request->status,
             'location' => $request->location,
+            'image' => $image,
         ]);
 
         return to_route('admin.tables.index')->with('success', 'Table created successfully.');
@@ -80,11 +86,34 @@ class TableController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(TableStoreRequest $request, Table $table)
-    {
-        $table->update($request->validated());
+{
+    $validatedData = $request->validated();
 
-        return to_route('admin.tables.index')->with('success', 'Table updated successfully.');
+    // Check if a new image has been uploaded
+    if ($request->hasFile('image')) {
+        // Delete the previous image if it exists
+        if ($table->image && Storage::exists($table->image)) {
+            Storage::delete($table->image);
+        }
+        // Store the new image
+        $image = $request->file('image')->store('public/payment');
+        $validatedData['image'] = $image;
     }
+
+    // Update the price if it has changed
+    if ($validatedData['price'] !== $table->price) {
+        $table->update(['price' => $validatedData['price']]);
+    }
+
+    $table->update($validatedData);
+
+    return redirect()->route('admin.tables.index')->with('success', 'Table updated successfully.');
+}
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

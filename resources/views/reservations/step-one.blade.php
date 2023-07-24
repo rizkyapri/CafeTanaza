@@ -12,9 +12,8 @@
                             <h3 class="mb-4 text-xl font-bold text-blue-600">Make Reservation</h3>
 
                             <div class="w-full bg-gray-200 rounded-full">
-                                <div
-                                    class="w-40 p-1 text-xs font-medium leading-none text-center text-blue-100 bg-blue-600 rounded-full">
-                                    Step1</div>
+                                <div class="w-40 p-1 text-xs font-medium leading-none text-center text-blue-100 bg-blue-600 rounded-full">
+                                    Step 1</div>
                             </div>
 
                             <form method="POST" action="{{ route('reservations.store.step.one') }}">

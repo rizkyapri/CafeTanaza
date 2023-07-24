@@ -25,9 +25,11 @@ class TableStoreRequest extends FormRequest
     {
         return [
             'name' => ['required'],
+            'price' => 'required|numeric', // Add the validation rule for the 'price' field
             'guest_number' => ['required'],
             'status' => ['required'],
             'location' => ['required'],
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Assuming you want to validate the image as well
         ];
     }
 }

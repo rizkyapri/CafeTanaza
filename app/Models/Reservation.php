@@ -18,7 +18,8 @@ class Reservation extends Model
         'email',
         'table_id',
         'res_date',
-        'guest_number'
+        'guest_number',
+        'payment_id',
     ];
 
     protected $dates = [
@@ -30,5 +31,9 @@ class Reservation extends Model
     public function table()
     {
         return $this->belongsTo(Table::class);
+    }
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
     }
 }

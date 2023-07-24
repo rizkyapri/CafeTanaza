@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\TableStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationStoreRequest;
+use App\Models\Payment;
 use App\Models\Reservation;
 use App\Models\Table;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReservationController extends Controller
 {
@@ -19,7 +21,8 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        $reservations = Reservation::all();
+        $reservations = Reservation::with('payment')->get();
+        // $payment = Payment::all();
         return view('admin.reservations.index', compact('reservations'));
     }
 
@@ -111,10 +114,49 @@ class ReservationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Reservation $reservation)
+    public function destroy($id)
     {
+        // cari data berdasarkan id menggunakan find()
+        // find() merupakan fungsi eloquent untuk mencari data berdasarkan primary key
+        $reservation = Reservation::find($id);
+
+        // hapus file gambar dari folder rese$reservation
+        Storage::delete('public/payment/' . $reservation->image);
+
+        // hapus data dari table rese$reservations
         $reservation->delete();
 
         return to_route('admin.reservations.index')->with('warning', 'Reservation deleted successfully.');
+    }
+
+    public function approve($id)
+    {
+        // Find the reservation by its ID
+        $reservation = Reservation::findOrFail($id);
+
+        // Check if the reservation has an associated payment
+        if ($reservation->payment) {
+            // Update the 'approve' field in the associated payment
+            $reservation->payment->update(['approve' => 1]);
+        }
+
+
+        // alihkan halaman ke halaman payments
+        return redirect()->back()->with('success', 'payment berhasil diapprove');
+    }
+
+    public function reject($id)
+    {
+        // Find the reservation by its ID
+        $reservation = Reservation::findOrFail($id);
+
+        // Check if the reservation has an associated payment
+        if ($reservation->payment) {
+            // Update the 'approve' field in the associated payment
+            $reservation->payment->update(['approve' => 0]);
+        }
+
+        // alihkan halaman ke halaman payments
+        return redirect()->back()->with('success', 'payment berhasil direject');
     }
 }

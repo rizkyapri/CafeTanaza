@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Table extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'guest_number', 'status', 'location'];
+    protected $fillable = ['name', 'price', 'guest_number', 'status', 'location', 'image'];
 
     protected $casts = [
         'status' => TableStatus::class,
